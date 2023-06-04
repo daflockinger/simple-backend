@@ -1,4 +1,4 @@
-Simple Backend App
+# Simple Backend App
 
 Small application with POST endpoint protected by Basic Auth.
 The post endpoint takes a payload in form of JSON and stores the information into a PostgreSQL database.
