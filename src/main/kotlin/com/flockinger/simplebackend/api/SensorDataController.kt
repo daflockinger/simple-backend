@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RequestMethod.POST
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(path = ["/api/v1"])
 class SensorDataController(
         private val service: SensorDataService
 ) {
 
     @RequestMapping(
-            path = ["sensor-data"], method = [POST],
+            path = ["telemetry"], method = [POST],
             consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE]
     )
     fun addSensorData(

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase
 class SensorDataControllerTest(
         @Autowired private val mockMvc: MockMvc
 ) {
@@ -44,7 +46,7 @@ class SensorDataControllerTest(
         )
         val request = AddSensorDataRequest("Cryo dynamics flux sensor 1", -2.2,Unit.DEGREE_KELVIN)
 
-        mockMvc.perform(post("/api/v1/sensor-data")
+        mockMvc.perform(post("/telemetry")
                 .with(httpBasic("admin", "admin"))
                 .accept(APPLICATION_JSON)
                 .contentType(APPLICATION_JSON)
@@ -59,7 +61,7 @@ class SensorDataControllerTest(
     fun `addSensorData with wrong password should return 401`() {
         val request = AddSensorDataRequest("Cryo dynamics flux sensor 1", -2.2,Unit.DEGREE_KELVIN)
 
-        mockMvc.perform(post("/api/v1/sensor-data")
+        mockMvc.perform(post("/telemetry")
                 .with(csrf())
                 .with(httpBasic("admin", "1234"))
                 .contentType(APPLICATION_JSON)
@@ -71,7 +73,7 @@ class SensorDataControllerTest(
     fun `addSensorData with wrong user should return 401`() {
         val request = AddSensorDataRequest("Cryo dynamics flux sensor 1", -2.2,Unit.DEGREE_KELVIN)
 
-        mockMvc.perform(post("/api/v1/sensor-data")
+        mockMvc.perform(post("/telemetry")
                 .with(csrf())
                 .with(httpBasic("hacker", "admin"))
                 .contentType(APPLICATION_JSON)
@@ -86,7 +88,7 @@ class SensorDataControllerTest(
         )
         val request = AddSensorDataRequest(null, -2.2,Unit.DEGREE_KELVIN)
 
-        mockMvc.perform(post("/api/v1/sensor-data")
+        mockMvc.perform(post("/telemetry")
                 .with(httpBasic("admin", "admin"))
                 .accept(APPLICATION_JSON)
                 .contentType(APPLICATION_JSON)
@@ -101,7 +103,7 @@ class SensorDataControllerTest(
         )
         val request = AddSensorDataRequest("Cryo dynamics flux sensor 1", -5000.0,Unit.DEGREE_KELVIN)
 
-        mockMvc.perform(post("/api/v1/sensor-data")
+        mockMvc.perform(post("/telemetry")
                 .with(httpBasic("admin", "admin"))
                 .accept(APPLICATION_JSON)
                 .contentType(APPLICATION_JSON)
@@ -116,7 +118,7 @@ class SensorDataControllerTest(
         )
         val request = AddSensorDataRequest("Cryo dynamics flux sensor 1", -2.2, null)
 
-        mockMvc.perform(post("/api/v1/sensor-data")
+        mockMvc.perform(post("/telemetry")
                 .with(httpBasic("admin", "admin"))
                 .accept(APPLICATION_JSON)
                 .contentType(APPLICATION_JSON)
