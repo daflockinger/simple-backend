@@ -2,39 +2,39 @@ package com.flockinger.simplebackend.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
 
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+        private val authProvider: BasicAuthenticationProvider
+) {
 
     companion object {
         const val ADMN_ROLE = "ADMIN"
     }
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain? {
-        http
-                .authorizeHttpRequests()
-                .requestMatchers("/api/v1/**").hasRole(ADMN_ROLE)
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        http.csrf(Customizer { it.disable() })
+                .authorizeRequests()
+                .requestMatchers("/**").hasAuthority(ADMN_ROLE)
                 .and()
-                .formLogin()
+                .httpBasic(Customizer.withDefaults())
         return http.build()
     }
 
     @Bean
-    fun userDetailsService(): UserDetailsService? {
-        val admin = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("admin")
-                .roles(ADMN_ROLE)
-                .build()
-        return InMemoryUserDetailsManager(admin)
+    fun authManager(http: HttpSecurity): AuthenticationManager? {
+        val authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder::class.java)
+        authenticationManagerBuilder.authenticationProvider(authProvider)
+        return authenticationManagerBuilder.build()
     }
+
 }
