@@ -2,7 +2,7 @@ package com.flockinger.simplebackend.repository.model
 
 import jakarta.persistence.*
 
-@Entity
+@Entity(name = "sensor_data")
 class SensorDataEntity (
         @Id
         var id: String,
